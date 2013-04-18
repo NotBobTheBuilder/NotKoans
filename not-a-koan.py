@@ -29,6 +29,9 @@ class OurOut:
     def write(self, line):
         self.line += line
 
+    def errors(self, line):
+        pass
+
     def flush(self):
         pass
 
@@ -37,9 +40,9 @@ class NotAKoansole(code.InteractiveConsole):
     challenges = [
         { "message" : "You can make the intepreter talk using 'print(\"hello world\")'\n"
         "Try running this now!",
-          "expected" : "Hello World"
+          "expected" : "wello world"
         },
-        { "message" : "You can add ints with +, such as  '1 + 1'"
+        { "message" : "You can add ints with +, such as  '1 + 1'\n"
         "Try running this now!",
           "expected" : "2"
         }
@@ -49,10 +52,13 @@ class NotAKoansole(code.InteractiveConsole):
         print (self.challenges[self.score]["message"])
         return input(prompt).strip()
 
+    def banner(self):
+        return ""
+
     def push(self, line):
         print("You tried "+line)
         out = OurOut()
-        with RedirectStdStreams(stdout=out):
+        with RedirectStdStreams(stdout=out, stderr=out):
             self.runsource(line)
         print(out.line.strip())
         if self.challenges[self.score]["expected"] == out.line.strip():
@@ -62,4 +68,7 @@ class NotAKoansole(code.InteractiveConsole):
             print("That's wrong")
 
 readline.parse_and_bind("tab: complete")
-NotAKoansole().interact()
+NotAKoansole().interact(banner=
+    "Welcome to NotAKoansole\n"
+    "Here you will learn to be clever\n\n"
+)
